@@ -14,19 +14,54 @@ namespace Microsoft.AspNetCore.Builder
     public static class HealthCheckAppBuilderExtensions
     {
         /// <summary>
-        /// Adds a middleware that provides a REST API for requesting health check status.
+        /// Adds a middleware that provides health check status.
         /// </summary>
         /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
-        /// <param name="path">The path on which to provide the API.</param>
+        /// <param name="path">The path on which to provide health check status.</param>
         /// <returns>A reference to the <paramref name="app"/> after the operation has completed.</returns>
+        /// <remarks>
+        /// The health check middleware will use default settings other than the provided <paramref name="path"/>.
+        /// </remarks>
         public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder app, PathString path)
         {
-            app = app ?? throw new ArgumentNullException(nameof(app));
-
-            return app.UseMiddleware<HealthCheckMiddleware>(Options.Create(new HealthCheckOptions()
+            if (app == null)
             {
-                Path = path
-            }));
+                throw new ArgumentNullException(nameof(app));
+            }
+
+            if (string.IsNullOrEmpty(path.Value))
+            {
+                throw new ArgumentException("A URL path must be provided", nameof(path));
+            }
+
+            return app.Map(path, b => b.UseMiddleware<HealthCheckMiddleware>());
+        }
+
+        /// <summary>
+        /// Adds a middleware that provides health check status.
+        /// </summary>
+        /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
+        /// <param name="path">The path on which to provide health check status.</param>
+        /// <param name="options">A <see cref="HealthCheckOptions"/> used to configure the middleware.</param>
+        /// <returns>A reference to the <paramref name="app"/> after the operation has completed.</returns>
+        public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder app, PathString path, HealthCheckOptions options)
+        {
+            if (app == null)
+            {
+                throw new ArgumentNullException(nameof(app));
+            }
+
+            if (string.IsNullOrEmpty(path.Value))
+            {
+                throw new ArgumentException("A URL path must be provided", nameof(path));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            return app.Map(path, b => b.UseMiddleware<HealthCheckMiddleware>(Options.Create(options)));
         }
     }
 }
