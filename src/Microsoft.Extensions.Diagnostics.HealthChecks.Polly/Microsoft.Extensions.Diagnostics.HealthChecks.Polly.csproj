@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>aspnetcore;diagnostics;resilience</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Extensions.Diagnostics.HealthChecks\Microsoft.Extensions.Diagnostics.HealthChecks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="6.0.1" />
+  </ItemGroup>
+
+
+</Project>
